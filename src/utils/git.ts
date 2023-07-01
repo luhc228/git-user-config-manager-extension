@@ -1,6 +1,6 @@
 import simpleGit from 'simple-git';
 
-export function isGitRepo(repoPath: string) {
+export async function isGitRepo(repoPath: string) {
   try {
     return simpleGit(repoPath).checkIsRepo();
   } catch (error) {
