@@ -2,7 +2,7 @@
   "name": "git-user-config-manager",
   "displayName": "Git User Config Manager",
   "description": "A VSCode Extension for managing your git user config.",
-  "publisher": "",
+  "publisher": "luhc228",
   "version": "0.0.0",
   "engines": {
     "vscode": "^1.78.0"
@@ -11,15 +11,12 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "appworks-demo.helloWorld",
-        "title": "Hello World"
-      }
-    ]
+    "commands": []
   },
   "scripts": {
     "package": "vsce package --no-dependencies --allow-missing-repository",
@@ -43,11 +40,14 @@
     "@types/node": "16.x",
     "@types/vscode": "^1.78.0",
     "@vscode/test-electron": "^2.3.0",
-    "esbuild": "^0.17.19",
+    "esbuild": "^0.18.10",
     "eslint": "^8.41.0",
     "glob": "^8.1.0",
     "husky": "^8.0.3",
     "mocha": "^10.2.0",
     "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "simple-git": "^3.19.1"
   }
 }

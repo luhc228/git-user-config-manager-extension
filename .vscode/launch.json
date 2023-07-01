@@ -11,9 +11,10 @@
       "request": "launch",
       "args": [
 				"--extensionDevelopmentPath=${workspaceFolder}",
+        "${workspaceFolder}/playgrounds/single-folder-workspace",
 				"--disable-extensions"
 			],
-      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "outFiles": ["${workspaceFolder}/out/**/*.js"],
       "preLaunchTask": "${defaultBuildTask}"
     },
     {
