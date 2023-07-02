@@ -1,8 +1,10 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
+import * as path from 'node:path';
 
 export const GIT_USER_CONFIG_WARNING_MESSAGE = 'git-user-config-manager.gitUserConfigNotSetWarningMessage';
+
 let showWarningMessage = false;
+
 export default function registryGitUserConfigWarningMessage() {
   return vscode.commands.registerCommand(
     GIT_USER_CONFIG_WARNING_MESSAGE,

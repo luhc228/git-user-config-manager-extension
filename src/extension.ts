@@ -2,16 +2,22 @@ import * as vscode from 'vscode';
 import GitConfigStatusChecker from './GitConfigStatusChecker';
 import StatusBar from './StatusBarItem';
 import registerCommands from './commands';
-import Storage from './Storage';
+import { GlobalStorage, WorkspaceStorage } from './Storage';
+import initGlobalConfig from './initGlobalConfig';
 
-export function activate(context: vscode.ExtensionContext) {
-  registerCommands(context);
+export async function activate(context: vscode.ExtensionContext) {
+  await initGlobalConfig();
+
+  const globalStorage = new GlobalStorage(context);
+  const workspaceStorage = new WorkspaceStorage(context);
+
+  registerCommands(context, workspaceStorage);
 
   const statusBar = new StatusBar(context);
   statusBar.updateStatusBarItem();
 
-  const storage = new Storage(context);
-  new GitConfigStatusChecker(context, statusBar, storage);
+
+  new GitConfigStatusChecker(context, statusBar, globalStorage, workspaceStorage);
 }
 
 export function deactivate() { }

@@ -16,7 +16,16 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": []
+    "configuration": {
+      "title": "Git User Config Manager",
+      "properties": {
+        "git-user-config-manager.gitUserConfig": {
+          "type": "array",
+          "description": "Git user config(user.name and user.email)",
+          "default": []
+        }
+      }
+    }
   },
   "scripts": {
     "package": "vsce package --no-dependencies --allow-missing-repository",
@@ -35,6 +44,7 @@
   "devDependencies": {
     "@applint/spec": "^1.2.3",
     "@commitlint/cli": "^17.6.6",
+    "@types/fs-extra": "^11.0.1",
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "16.x",
@@ -48,6 +58,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "fs-extra": "^11.1.1",
     "simple-git": "^3.19.1"
   }
 }
