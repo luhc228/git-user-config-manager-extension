@@ -8,7 +8,7 @@ export async function isGitRepo(repoPath: string) {
   }
 }
 
-export async function getUserConfig(repoPath: string, scope: 'global' | 'local') {
+export async function getUserConfig(repoPath: string, scope?: 'system' | 'global' | 'local' | 'worktree') {
   const git = simpleGit(repoPath);
   const username = await git.getConfig('user.name', scope);
   const userEmail = await git.getConfig('user.email', scope);

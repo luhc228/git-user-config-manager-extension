@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
-import { isGitRepo, getUserConfig } from './utils/git';
+import { isGitRepo, getUserConfig as getGitUserConfig } from './utils/git';
 import { GIT_USER_CONFIG_NOT_SET_WARNING_MESSAGE_COMMAND } from './commands/showGitUserConfigNotSetMessage';
 import { storageKeys } from './constants';
+import { getBaseGitUserConfigs } from './utils/baseGitUserConfigs';
 import type StatusBarItem from './StatusBarItem';
 import type { GlobalStorage, WorkspaceStorage } from './Storage';
 
@@ -40,7 +41,7 @@ export default class GitConfigStatusChecker {
       return;
     }
 
-    this.setCurrentOpenedGitRepository();
+    await this.setCurrentOpenedGitRepository();
 
     await Promise.all(this.gitRepositories.map((gitRepository) => {
       return this.checkIsGitUserConfigAlreadySet(gitRepository);
@@ -48,7 +49,7 @@ export default class GitConfigStatusChecker {
   }
 
   // set current opened git repository to workspace storage
-  private setCurrentOpenedGitRepository() {
+  private async setCurrentOpenedGitRepository() {
     let currentOpenedGitRepository: string = this.gitRepositories[0];
 
     const { activeTextEditor } = vscode.window;
@@ -60,8 +61,27 @@ export default class GitConfigStatusChecker {
         currentOpenedGitRepository = possibleGitRepository;
       }
     }
+    // If current opened git repo change, update the status bar item
+    if (currentOpenedGitRepository) {
+      await this.addConfigIdToStatusBarItem(currentOpenedGitRepository);
+    }
 
     this.workspaceStorage.set(storageKeys.CURRENT_OPENED_GIT_REPOSITORY, currentOpenedGitRepository);
+  }
+
+  private async addConfigIdToStatusBarItem(openedGitRepository: string) {
+    const baseGitUserConfigs = getBaseGitUserConfigs();
+    const gitUserConfig = await getGitUserConfig(openedGitRepository, 'local');
+    const matchGitUserConfig = baseGitUserConfigs.find(baseGitUserConfig => {
+      return (
+        baseGitUserConfig.userEmail === gitUserConfig.userEmail &&
+        baseGitUserConfig.username === baseGitUserConfig.username
+      );
+    });
+
+    if (matchGitUserConfig) {
+      this.statusBarItem.updateStatusBarItem('Normal', { text: `${matchGitUserConfig.id}` });
+    }
   }
 
   // Return true, display it. Return false, hide it.
@@ -110,20 +130,20 @@ export default class GitConfigStatusChecker {
     if ((this.globalStorage.get<string[]>(storageKeys.CHECKED_GIT_REPOSITORIES) || []).includes(gitRepository)) {
       return;
     }
-    const localUserConfig = await getUserConfig(gitRepository, 'local');
-    if (localUserConfig.userEmail === null && localUserConfig.username === null) {
+    const localUserConfig = await getGitUserConfig(gitRepository, 'local');
+    if (localUserConfig.userEmail === null || localUserConfig.username === null) {
       // Show warning message.
       vscode.commands.executeCommand(
         GIT_USER_CONFIG_NOT_SET_WARNING_MESSAGE_COMMAND,
         gitRepository,
         () => {
+          // While user confirm the message, we don't show warning status again.
           this.statusBarItem.updateStatusBarItem('Normal');
+          // Mark as checked git repo to global storage.
+          this.addCheckedGitRepository(gitRepository);
         },
       );
       this.statusBarItem.updateStatusBarItem('Warning', { command: GIT_USER_CONFIG_NOT_SET_WARNING_MESSAGE_COMMAND });
-
-      // Update storage.
-      this.addCheckedGitRepository(gitRepository);
     }
   }
 
