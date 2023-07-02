@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { isGitRepo, getUserConfig } from './utils/git';
-import { GIT_USER_CONFIG_WARNING_MESSAGE } from './commands/gitUserConfigWarningMessage';
+import { NOT_SET_GIT_USER_CONFIG_WARNING_MESSAGE_COMMAND } from './commands/showNotSetGitUserConfigMessage';
 import { storageKeys } from './constants';
 import type StatusBarItem from './StatusBarItem';
 import type { GlobalStorage, WorkspaceStorage } from './Storage';
@@ -114,13 +114,13 @@ export default class GitConfigStatusChecker {
     if (localUserConfig.userEmail === null && localUserConfig.username === null) {
       // Show warning message.
       vscode.commands.executeCommand(
-        GIT_USER_CONFIG_WARNING_MESSAGE,
+        NOT_SET_GIT_USER_CONFIG_WARNING_MESSAGE_COMMAND,
         gitRepository,
         () => {
           this.statusBarItem.updateStatusBarItem('Normal');
         },
       );
-      this.statusBarItem.updateStatusBarItem('Warning', { command: GIT_USER_CONFIG_WARNING_MESSAGE });
+      this.statusBarItem.updateStatusBarItem('Warning', { command: NOT_SET_GIT_USER_CONFIG_WARNING_MESSAGE_COMMAND });
 
       // Update storage.
       this.addCheckedGitRepository(gitRepository);

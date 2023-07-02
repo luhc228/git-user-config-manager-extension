@@ -1,6 +1,9 @@
 import * as vscode from 'vscode';
-import registryGitUserConfigWarningMessage from './gitUserConfigWarningMessage';
-import registryGitUserConfigQuickPick from './gitUserConfigQuickPick';
+import registryShowNotSetGitUserConfigMessage from './showNotSetGitUserConfigMessage';
+import registryShowEntryOptionsQuickPick from './showEntryOptionsQuickPick';
+import registryShowNoGitUserConfigsFoundMessage from './showNoGitUserConfigsFoundMessage';
+import registryShowAddUserConfigQuickPick from './addGitUserConfig';
+
 import type { WorkspaceStorage } from '../Storage';
 
 export default function registerCommands(
@@ -8,7 +11,9 @@ export default function registerCommands(
   workspaceStorage: WorkspaceStorage,
 ) {
   context.subscriptions.push(
-    registryGitUserConfigWarningMessage(),
-    registryGitUserConfigQuickPick(context, workspaceStorage),
+    registryShowNotSetGitUserConfigMessage(),
+    registryShowEntryOptionsQuickPick(context, workspaceStorage),
+    registryShowAddUserConfigQuickPick(),
+    registryShowNoGitUserConfigsFoundMessage(),
   );
 }

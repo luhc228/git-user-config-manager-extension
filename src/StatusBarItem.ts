@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { GIT_USER_CONFIG_QUICK_PICK } from './commands/gitUserConfigQuickPick';
+import { SHOW_ENTRY_OPTIONS_QUICK_PICK_COMMAND } from './commands/showEntryOptionsQuickPick';
 
 type Status = 'Normal' | 'Warning';
 
@@ -12,7 +12,7 @@ export default class GitUserConfigStatusBarItem {
   ) {
     this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
     context.subscriptions.push(this.statusBarItem);
-    this.normalStatusCommand = GIT_USER_CONFIG_QUICK_PICK;
+    this.normalStatusCommand = SHOW_ENTRY_OPTIONS_QUICK_PICK_COMMAND;
   }
 
   public updateStatusBarItem(
