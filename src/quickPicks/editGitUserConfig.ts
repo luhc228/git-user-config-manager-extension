@@ -15,10 +15,13 @@ export default async function showEditGitUserConfigMultiInput() {
   }
 
   showGitUserConfigsQuickPick(gitUserConfigs, async (selection) => {
-    const state = gitUserConfigs.find(gitUserConfig => gitUserConfig.id === selection.label) as BaseGitUserConfig;
-    await MultiStepInput.run(input => inputGitUserConfigId(input, state, false));
-    await setBaseGitConfig(state);
+    const selected = gitUserConfigs.find(gitUserConfig => gitUserConfig.id === selection.label) as BaseGitUserConfig;
+    if (!selected) {
+      throw new Error(`There is no existing git user config of ${selection.label}.`);
+    }
+    await MultiStepInput.run(input => inputGitUserConfigId(input, selected, false));
+    await setBaseGitConfig(selected);
 
-    vscode.window.showInformationMessage(`Edit Git User Config '${state.id}' successfully.`);
+    vscode.window.showInformationMessage(`Edit Git User Config '${selected.id}' successfully.`);
   });
 }

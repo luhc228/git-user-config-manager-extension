@@ -3,6 +3,8 @@ import showApplyGitUserConfigQuickPick from './ApplyGitUserConfig';
 import showAddGitUserConfigMultiInput from './addGitUserConfig';
 import showEditGitUserConfigMultiInput from './editGitUserConfig';
 import showRemoveGitUserConfigQuickPick from './removeGitUserConfig';
+import showGenerateSSHKeyQuickPick from './generateSSHKey';
+import showCopySSHKeyQuickPick from './copySSHKey';
 import type { WorkspaceStorage } from '../Storage';
 
 type Option = {
@@ -34,6 +36,16 @@ const options: Option[] = [
     label: 'Remove Git User Config',
     detail: 'Remove one of your git user configs.',
     executor: showRemoveGitUserConfigQuickPick,
+  },
+  {
+    label: 'Generate SSH Key',
+    detail: 'Generate SSH Key by your git user configs.',
+    executor: showGenerateSSHKeyQuickPick,
+  },
+  {
+    label: 'Copy SSH Key',
+    detail: 'Generate SSH Key by your git user configs.',
+    executor: showCopySSHKeyQuickPick,
   },
 ];
 

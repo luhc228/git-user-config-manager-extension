@@ -128,7 +128,7 @@ export default class GitConfigStatusChecker {
 
   private async checkIsGitUserConfigAlreadySet(gitRepository: string) {
     if ((this.globalStorage.get<string[]>(storageKeys.CHECKED_GIT_REPOSITORIES) || []).includes(gitRepository)) {
-      return;
+      // return;
     }
     const localUserConfig = await getGitUserConfig(gitRepository, 'local');
     if (localUserConfig.userEmail === null || localUserConfig.username === null) {

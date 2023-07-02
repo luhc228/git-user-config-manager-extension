@@ -11,15 +11,14 @@ export async function inputGitUserConfigId(
   state: Partial<BaseGitUserConfig>,
   create: boolean = true,
 ) {
-  const tip = 'Enter id for current git user config. For Example: GitHub, GitLab';
   state.id = await input.showInputBox({
     title: getInputBoxTitle(create),
     value: state.id ?? '',
     step: 1,
     totalSteps: 3,
-    placeholder: tip,
+    placeholder: 'For Example: GitHub, GitLab',
     shouldResume: shouldResume,
-    prompt: tip,
+    prompt: 'Enter id for current git user config.',
     validate: async (input) => validateConfigId(input, create),
   });
   return (input: MultiStepInput) => inputGitUsername(input, state, create);

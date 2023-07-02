@@ -7,6 +7,9 @@ dependencies:
   simple-git:
     specifier: ^3.19.1
     version: 3.19.1
+  ssh-config:
+    specifier: ^4.2.1
+    version: 4.2.1
 
 devDependencies:
   '@applint/spec':
@@ -48,6 +51,9 @@ devDependencies:
   mocha:
     specifier: ^10.2.0
     version: 10.2.0
+  ssh-keygen:
+    specifier: ^0.5.0
+    version: 0.5.0
   typescript:
     specifier: ^5.0.4
     version: 5.0.4
@@ -3807,6 +3813,17 @@ packages:
       readable-stream: 3.6.2
     dev: true
 
+  /ssh-config@4.2.1:
+    resolution: {integrity: sha512-0FdXhdpjwzo5Cao8UJdCv+MJ+7dK/9jvi6CaJrg/XpKRu7ryn43BUIYnPQt+IS5XEqmBn3cxOUkU4FM3m/Wkqw==}
+    dev: false
+
+  /ssh-keygen@0.5.0:
+    resolution: {integrity: sha512-TZmhcpeZTkEnIZF0aItjXz0zIIkHnJyti4bIFiO4Ir0tqwsKDPtC7nFnvjPAy/diGXNy7m5ZcGg44QfUNA9y5g==}
+    engines: {node: '>= 0.6.0'}
+    dependencies:
+      underscore: 1.4.4
+    dev: true
+
   /string-width@4.2.3:
     resolution: {integrity: sha1-JpxxF9J7Ba0uU2gwqOyJXvnG0BA=, tarball: https://registry.npmmirror.com/string-width/download/string-width-4.2.3.tgz}
     engines: {node: '>=8'}
@@ -4141,6 +4158,10 @@ packages:
       has-bigints: 1.0.2
       has-symbols: 1.0.3
       which-boxed-primitive: 1.0.2
+    dev: true
+
+  /underscore@1.4.4:
+    resolution: {integrity: sha512-ZqGrAgaqqZM7LGRzNjLnw5elevWb5M8LEoDMadxIW3OWbcv72wMMgKdwOKpd5Fqxe8choLD8HN3iSj3TUh/giQ==}
     dev: true
 
   /universalify@2.0.0:

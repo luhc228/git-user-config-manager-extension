@@ -34,3 +34,11 @@ export function validateEmail(input: string) {
   }
   return undefined;
 }
+
+export function validateHostname(input: string) {
+  const validHostname = /^[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-]+$/;
+  if (!validHostname.test(input)) {
+    return 'Please enter a valid host name.';
+  }
+  return undefined;
+}

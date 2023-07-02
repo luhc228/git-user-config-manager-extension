@@ -6,5 +6,5 @@ export interface BaseGitUserConfig {
 }
 
 export interface GitUserConfig extends BaseGitUserConfig {
-  gitdir: string[];
+  gitdirs: string[];
 }

@@ -55,10 +55,12 @@
     "glob": "^8.1.0",
     "husky": "^8.0.3",
     "mocha": "^10.2.0",
+    "ssh-keygen": "^0.5.0",
     "typescript": "^5.0.4"
   },
   "dependencies": {
     "fs-extra": "^11.1.1",
-    "simple-git": "^3.19.1"
+    "simple-git": "^3.19.1",
+    "ssh-config": "^4.2.1"
   }
 }

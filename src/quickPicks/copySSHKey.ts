@@ -1,15 +1,12 @@
 import * as vscode from 'vscode';
-import { setUserConfig as setGitUserConfig } from '../utils/git';
-import type { WorkspaceStorage } from '../Storage';
-import { storageKeys } from '../constants';
 import { getBaseGitUserConfigs } from '../utils/baseGitUserConfigs';
 import { SHOW_NO_GIT_USER_CONFIGS_FOUND_WARNING_MESSAGE_COMMAND } from '../commands/showNoGitUserConfigsFoundMessage';
 import showGitUserConfigsQuickPick from './showGitUserConfigs';
+import { getSSHPublicKey } from '../utils/ssh';
 
-export default async function showApplyGitUserConfigQuickPick(
+export default async function showShowSSHKeyQuickPick(
   context: vscode.ExtensionContext,
   quickPick: vscode.QuickPick<vscode.QuickPickItem>,
-  workspaceStorage: WorkspaceStorage,
 ) {
   const gitUserConfigs = getBaseGitUserConfigs();
 
@@ -25,11 +22,10 @@ export default async function showApplyGitUserConfigQuickPick(
       throw new Error(`There is no existing git user config of ${selection.label}.`);
     }
 
-    await setGitUserConfig(
-      workspaceStorage.get(storageKeys.CURRENT_OPENED_GIT_REPOSITORY),
-      selected!.username,
-      selected!.userEmail,
+    const SSHPublicKey = await getSSHPublicKey(selected.id);
+    await vscode.env.clipboard.writeText(SSHPublicKey);
+    await vscode.window.showInformationMessage(
+      `Copy SSH Key for ${selected?.id} successfully!`,
     );
-    vscode.window.showInformationMessage(`Apply git user config ${selected?.id} successfully!`);
   });
 }
