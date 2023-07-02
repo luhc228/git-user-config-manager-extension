@@ -23,3 +23,17 @@ export async function setBaseGitConfig(baseGitUserConfig: BaseGitUserConfig) {
     vscode.ConfigurationTarget.Global,
   );
 }
+
+export async function removeBaseGitConfig(useConfigId: BaseGitUserConfig['id']) {
+  const configs = getBaseGitUserConfigs();
+  const configIndex = configs.findIndex(config => config.id === useConfigId);
+  if (configIndex > -1) {
+    configs.splice(configIndex, 1);
+
+    await vscode.workspace.getConfiguration().update(
+      VSCConfigurationKey.GIT_USER_CONFIG,
+      configs,
+      vscode.ConfigurationTarget.Global,
+    );
+  }
+}

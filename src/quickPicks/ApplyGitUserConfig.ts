@@ -21,11 +21,11 @@ export default async function showApplyGitUserConfigQuickPick(
 
   showGitUserConfigsQuickPick(gitUserConfigs, async (selection) => {
     const selected = gitUserConfigs.find(gitUserConfig => gitUserConfig.id === selection.label);
-
     await setGitUserConfig(
       workspaceStorage.get(storageKeys.CURRENT_OPENED_GIT_REPOSITORY),
       selected!.username,
       selected!.userEmail,
     );
+    vscode.window.showInformationMessage(`Apply git user config ${selected?.id} successfully!`);
   });
 }

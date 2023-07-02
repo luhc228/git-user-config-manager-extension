@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { isGitRepo, getUserConfig } from './utils/git';
-import { NOT_SET_GIT_USER_CONFIG_WARNING_MESSAGE_COMMAND } from './commands/showNotSetGitUserConfigMessage';
+import { GIT_USER_CONFIG_NOT_SET_WARNING_MESSAGE_COMMAND } from './commands/showGitUserConfigNotSetMessage';
 import { storageKeys } from './constants';
 import type StatusBarItem from './StatusBarItem';
 import type { GlobalStorage, WorkspaceStorage } from './Storage';
@@ -114,13 +114,13 @@ export default class GitConfigStatusChecker {
     if (localUserConfig.userEmail === null && localUserConfig.username === null) {
       // Show warning message.
       vscode.commands.executeCommand(
-        NOT_SET_GIT_USER_CONFIG_WARNING_MESSAGE_COMMAND,
+        GIT_USER_CONFIG_NOT_SET_WARNING_MESSAGE_COMMAND,
         gitRepository,
         () => {
           this.statusBarItem.updateStatusBarItem('Normal');
         },
       );
-      this.statusBarItem.updateStatusBarItem('Warning', { command: NOT_SET_GIT_USER_CONFIG_WARNING_MESSAGE_COMMAND });
+      this.statusBarItem.updateStatusBarItem('Warning', { command: GIT_USER_CONFIG_NOT_SET_WARNING_MESSAGE_COMMAND });
 
       // Update storage.
       this.addCheckedGitRepository(gitRepository);
@@ -158,7 +158,7 @@ export default class GitConfigStatusChecker {
       const possibleGitRepository = this.getPossibleGitRepository(removedWorkspaceFolder);
       const possibleGitRepositoryIndex = this.gitRepositories.indexOf(possibleGitRepository);
       if (possibleGitRepositoryIndex > -1) {
-        this.gitRepositories.splice(possibleGitRepositoryIndex, 0);
+        this.gitRepositories.splice(possibleGitRepositoryIndex, 1);
       }
       return this.removeCheckedGitRepositoryFromStorage(possibleGitRepository);
     }));

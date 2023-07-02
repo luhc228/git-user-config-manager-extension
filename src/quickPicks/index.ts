@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import showApplyGitUserConfigQuickPick from './ApplyGitUserConfig';
 import showAddGitUserConfigMultiInput from './addGitUserConfig';
 import showEditGitUserConfigMultiInput from './editGitUserConfig';
+import showRemoveGitUserConfigQuickPick from './removeGitUserConfig';
 import type { WorkspaceStorage } from '../Storage';
 
 type Option = {
@@ -29,6 +30,11 @@ const options: Option[] = [
     detail: 'Edit one of your git user configs.',
     executor: showEditGitUserConfigMultiInput,
   },
+  {
+    label: 'Remove Git User Config',
+    detail: 'Remove one of your git user configs.',
+    executor: showRemoveGitUserConfigQuickPick,
+  },
 ];
 
 export function showEntryOptionsQuickPick(context: vscode.ExtensionContext, workspaceStorage: WorkspaceStorage) {
@@ -55,6 +61,6 @@ export function showEntryOptionsQuickPick(context: vscode.ExtensionContext, work
 
 export {
   showAddGitUserConfigMultiInput,
-  showSetGitUserConfigQuickPick,
+  showApplyGitUserConfigQuickPick,
   showEditGitUserConfigMultiInput,
 };
