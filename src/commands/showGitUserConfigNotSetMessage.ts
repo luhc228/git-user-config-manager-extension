@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'node:path';
-import { SHOW_ENTRY_OPTIONS_QUICK_PICK_COMMAND } from './showEntryOptionsQuickPick';
+import { SHOW_APPLY_GIT_USER_CONFIG_QUICK_PICK_COMMAND } from './showApplyGitUserConfigQuickPick';
 
 export const GIT_USER_CONFIG_NOT_SET_WARNING_MESSAGE_COMMAND = 'git-user-config-manager.showNotSetGitUserConfigWarningMessage';
 
@@ -22,7 +22,7 @@ export default function registryShowGitUserConfigNotSetWarningMessage() {
         showWarningMessage = false;
         callback();
         if (res === actions[0]) {
-          vscode.commands.executeCommand(SHOW_ENTRY_OPTIONS_QUICK_PICK_COMMAND);
+          vscode.commands.executeCommand(SHOW_APPLY_GIT_USER_CONFIG_QUICK_PICK_COMMAND);
         }
       });
     },

@@ -4,15 +4,11 @@ import { SHOW_NO_GIT_USER_CONFIGS_FOUND_WARNING_MESSAGE_COMMAND } from '../comma
 import showGitUserConfigsQuickPick from './showGitUserConfigs';
 import { generateSSHKey, isSSHKeyExisted, updateSSHConfig } from '../utils/ssh';
 
-export default async function showGenerateSSHKeyQuickPick(
-  context: vscode.ExtensionContext,
-  quickPick: vscode.QuickPick<vscode.QuickPickItem>,
-) {
+export default async function showGenerateSSHKeyQuickPick() {
   const gitUserConfigs = getBaseGitUserConfigs();
 
   if (gitUserConfigs.length === 0) {
     await vscode.commands.executeCommand(SHOW_NO_GIT_USER_CONFIGS_FOUND_WARNING_MESSAGE_COMMAND);
-    quickPick.dispose();
     return;
   }
 

@@ -3,7 +3,7 @@ import registryShowGitUserConfigNotSetMessage from './showGitUserConfigNotSetMes
 import registryShowEntryOptionsQuickPick from './showEntryOptionsQuickPick';
 import registryShowNoGitUserConfigsFoundMessage from './showNoGitUserConfigsFoundMessage';
 import registryShowAddUserConfigQuickPick from './addGitUserConfig';
-
+import registryShowApplyGitUserConfigQuickPick from './showApplyGitUserConfigQuickPick';
 import type { WorkspaceStorage } from '../Storage';
 
 export default function registerCommands(
@@ -15,5 +15,6 @@ export default function registerCommands(
     registryShowEntryOptionsQuickPick(context, workspaceStorage),
     registryShowAddUserConfigQuickPick(),
     registryShowNoGitUserConfigsFoundMessage(),
+    registryShowApplyGitUserConfigQuickPick(context, workspaceStorage),
   );
 }

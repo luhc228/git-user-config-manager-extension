@@ -8,11 +8,7 @@ import showCopySSHKeyQuickPick from './copySSHKey';
 import type { WorkspaceStorage } from '../Storage';
 
 type Option = {
-  executor: (
-    context: vscode.ExtensionContext,
-    quickPick: vscode.QuickPick<vscode.QuickPickItem>,
-    workspaceStorage: WorkspaceStorage
-  ) => Promise<void>;
+  executor: (context: vscode.ExtensionContext, workspaceStorage: WorkspaceStorage) => Promise<void>;
   label: string;
   detail: string;
 };
@@ -60,10 +56,16 @@ export function showEntryOptionsQuickPick(context: vscode.ExtensionContext, work
   quickPick.onDidChangeSelection(selection => {
     if (selection[0]) {
       const selected = options.find(option => option.label === selection[0].label);
+      if (!selected) {
+        vscode.window.showErrorMessage(`'${selection[0].label}' config is not found.`);
+        return;
+      }
 
-      selected?.executor(context, quickPick, workspaceStorage)
+      selected.executor(context, workspaceStorage)
         .catch((err) => {
           vscode.window.showErrorMessage(err.message);
+        }).finally(() => {
+          quickPick.dispose();
         });
     }
   });

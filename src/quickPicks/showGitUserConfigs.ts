@@ -18,7 +18,6 @@ $(mail) ${userEmail}`,
       } catch (error: any) {
         vscode.window.showErrorMessage(error.message);
       } finally {
-        quickPick.hide();
         quickPick.dispose();
       }
     }
