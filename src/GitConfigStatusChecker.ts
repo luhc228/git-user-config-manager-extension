@@ -56,7 +56,10 @@ export default class GitConfigStatusChecker {
     if (activeTextEditor && activeTextEditor.document.uri.scheme === 'file') {
       const resource = activeTextEditor.document.uri;
       const folder = vscode.workspace.getWorkspaceFolder(resource);
-      const possibleGitRepository = this.gitRepositories.find(gitRepository => gitRepository === folder!.uri.path);
+      if (!folder) {
+        return;
+      }
+      const possibleGitRepository = this.gitRepositories.find(gitRepository => gitRepository === folder.uri.path);
       if (possibleGitRepository) {
         currentOpenedGitRepository = possibleGitRepository;
       }
@@ -128,18 +131,28 @@ export default class GitConfigStatusChecker {
 
   private async checkIsGitUserConfigAlreadySet(gitRepository: string) {
     if ((this.globalStorage.get<string[]>(storageKeys.CHECKED_GIT_REPOSITORIES) || []).includes(gitRepository)) {
-      // return;
+      return;
     }
-    const localUserConfig = await getGitUserConfig(gitRepository, 'local');
-    if (localUserConfig.userEmail === null || localUserConfig.username === null) {
-      // Show warning message.
+    const localGitUserConfig = await getGitUserConfig(gitRepository, 'local');
+    // Maybe it will use the includeIf.gitdir.path git config.
+    const currentRepoGitUserConfig = await getGitUserConfig(gitRepository);
+    const globalGitUserConfig = await getGitUserConfig(gitRepository, 'global');
+    // If current repo git user config is same as global git user config, show warning message to user.
+    if (
+      (localGitUserConfig.userEmail === null && localGitUserConfig.username === null) && (
+        currentRepoGitUserConfig.userEmail !== globalGitUserConfig.userEmail ||
+        currentRepoGitUserConfig.username !== globalGitUserConfig.username
+      )
+    ) {
+      // Show warning message only once.
       vscode.commands.executeCommand(
         GIT_USER_CONFIG_NOT_SET_WARNING_MESSAGE_COMMAND,
         gitRepository,
+        globalGitUserConfig,
         () => {
           // While user confirm the message, we don't show warning status again.
           this.statusBarItem.updateStatusBarItem('Normal');
-          // Mark as checked git repo to global storage.
+          // Mark as checked git repo to global storage, don't show warning message next time.
           this.addCheckedGitRepository(gitRepository);
         },
       );

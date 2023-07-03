@@ -21,7 +21,7 @@ export default async function showShowSSHKeyQuickPick() {
     const SSHPublicKey = await getSSHPublicKey(selected.id);
     await vscode.env.clipboard.writeText(SSHPublicKey);
     await vscode.window.showInformationMessage(
-      `Copy SSH Key for ${selected?.id} successfully!`,
+      `Copy SSH Key of '${selected.id}' successfully!`,
     );
   });
 }

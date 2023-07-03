@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'node:path';
 import { SHOW_APPLY_GIT_USER_CONFIG_QUICK_PICK_COMMAND } from './showApplyGitUserConfigQuickPick';
+import { BaseGitUserConfig } from '../types';
 
 export const GIT_USER_CONFIG_NOT_SET_WARNING_MESSAGE_COMMAND = 'git-user-config-manager.showNotSetGitUserConfigWarningMessage';
 
@@ -9,14 +10,14 @@ let showWarningMessage = false;
 export default function registryShowGitUserConfigNotSetWarningMessage() {
   return vscode.commands.registerCommand(
     GIT_USER_CONFIG_NOT_SET_WARNING_MESSAGE_COMMAND,
-    (gitRepoPath: string, callback: () => void) => {
+    (gitRepoPath: string, { username, userEmail }: BaseGitUserConfig, callback: () => void) => {
       if (showWarningMessage) {
         return;
       }
       showWarningMessage = true;
       const actions = ['Yes', 'No'];
       vscode.window.showWarningMessage<string>(
-        `Current git repository(${path.basename(gitRepoPath)}) is not set the user config. Do you want to set it?`,
+        `Current git repository(${path.basename(gitRepoPath)}) will use the global git config(${username}(${userEmail})). Do you want to use another one?`,
         ...actions,
       ).then(res => {
         showWarningMessage = false;

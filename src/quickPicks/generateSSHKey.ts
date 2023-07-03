@@ -18,7 +18,7 @@ export default async function showGenerateSSHKeyQuickPick() {
       throw new Error(`There is no existing git user config of ${selection.label}.`);
     }
 
-    const SSHKeyExisted = await isSSHKeyExisted(selected!.id);
+    const SSHKeyExisted = await isSSHKeyExisted(selected.id);
     if (SSHKeyExisted) {
       const items = ['Yes', 'No'];
       const value = await vscode.window.showQuickPick(
@@ -46,7 +46,7 @@ export default async function showGenerateSSHKeyQuickPick() {
       'Copy SSH Public Key',
     ];
     const actionSelection = await vscode.window.showInformationMessage(
-      `Generate SSH Key for ${selected?.id} successfully!`,
+      `Generate SSH Key for '${selected.id}' successfully!`,
       ...actions,
     );
     if (actionSelection === actions[0]) {

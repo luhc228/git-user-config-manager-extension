@@ -1,9 +1,15 @@
 import * as vscode from 'vscode';
-import { getBaseGitUserConfigs, removeBaseGitConfig } from '../utils/baseGitUserConfigs';
+import { getBaseGitUserConfigs, removeBaseGitUserConfig } from '../utils/baseGitUserConfigs';
 import { SHOW_NO_GIT_USER_CONFIGS_FOUND_WARNING_MESSAGE_COMMAND } from '../commands/showNoGitUserConfigsFoundMessage';
 import showGitUserConfigsQuickPick from './showGitUserConfigs';
+import { WorkspaceStorage } from '../Storage';
+import type StatusBarItem from 'src/StatusBarItem';
 
-export default async function showRemoveGitUserConfigQuickPick() {
+export default async function showRemoveGitUserConfigQuickPick(
+  context: vscode.ExtensionContext,
+  workspaceStorage: WorkspaceStorage,
+  statusBarItem: StatusBarItem,
+) {
   const gitUserConfigs = getBaseGitUserConfigs();
 
   if (gitUserConfigs.length === 0) {
@@ -12,7 +18,8 @@ export default async function showRemoveGitUserConfigQuickPick() {
   }
 
   showGitUserConfigsQuickPick(gitUserConfigs, async (selection) => {
-    await removeBaseGitConfig(selection.label);
+    await removeBaseGitUserConfig(selection.label);
+    statusBarItem.updateStatusBarItem('Normal');
     vscode.window.showInformationMessage(`Remove git user config ${selection.label} successfully!`);
   });
 }

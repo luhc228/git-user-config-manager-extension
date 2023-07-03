@@ -1,15 +1,10 @@
 import * as vscode from 'vscode';
-import { setUserConfig as setGitUserConfig } from '../utils/git';
-import type { WorkspaceStorage } from '../Storage';
-import { storageKeys } from '../constants';
-import { getBaseGitUserConfigs } from '../utils/baseGitUserConfigs';
 import { SHOW_NO_GIT_USER_CONFIGS_FOUND_WARNING_MESSAGE_COMMAND } from '../commands/showNoGitUserConfigsFoundMessage';
+import { getBaseGitUserConfigs } from '../utils/baseGitUserConfigs';
 import showGitUserConfigsQuickPick from './showGitUserConfigs';
+import { addUserGitDir } from '../utils/git';
 
-export default async function showApplyGitUserConfigQuickPick(
-  context: vscode.ExtensionContext,
-  workspaceStorage: WorkspaceStorage,
-) {
+export default async function addGitDirs() {
   const gitUserConfigs = getBaseGitUserConfigs();
 
   if (gitUserConfigs.length === 0) {
@@ -23,11 +18,17 @@ export default async function showApplyGitUserConfigQuickPick(
       throw new Error(`There is no existing git user config of ${selection.label}.`);
     }
 
-    await setGitUserConfig(
-      workspaceStorage.get(storageKeys.CURRENT_OPENED_GIT_REPOSITORY),
-      selected.username,
-      selected.userEmail,
-    );
-    vscode.window.showInformationMessage(`Apply git user config '${selected.id}' successfully!`);
+    const selectFolderUris = await vscode.window.showOpenDialog({
+      canSelectFolders: true,
+      canSelectFiles: false,
+      canSelectMany: true,
+    });
+    if (!selectFolderUris) {
+      return;
+    }
+    for (const { path } of selectFolderUris) {
+      await addUserGitDir(path, selected.id);
+    }
+    vscode.window.showInformationMessage(`Add 'gitdir' config to use '${selected.id}' user config successfully!`);
   });
 }

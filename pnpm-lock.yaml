@@ -4,6 +4,9 @@ dependencies:
   fs-extra:
     specifier: ^11.1.1
     version: 11.1.1
+  ini:
+    specifier: ^2.0.0
+    version: 2.0.0
   simple-git:
     specifier: ^3.19.1
     version: 3.19.1
@@ -24,6 +27,9 @@ devDependencies:
   '@types/glob':
     specifier: ^8.1.0
     version: 8.1.0
+  '@types/ini':
+    specifier: ^1.3.31
+    version: 1.3.31
   '@types/mocha':
     specifier: ^10.0.1
     version: 10.0.1
@@ -1031,6 +1037,10 @@ packages:
     dependencies:
       '@types/minimatch': 5.1.2
       '@types/node': 16.18.34
+    dev: true
+
+  /@types/ini@1.3.31:
+    resolution: {integrity: sha512-8ecxxaG4AlVEM1k9+BsziMw8UsX0qy3jYI1ad/71RrDZ+rdL6aZB0wLfAuflQiDhkD5o4yJ0uPK3OSUic3fG0w==}
     dev: true
 
   /@types/json-schema@7.0.12:
@@ -2642,6 +2652,11 @@ packages:
   /ini@1.3.8:
     resolution: {integrity: sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==}
     dev: true
+
+  /ini@2.0.0:
+    resolution: {integrity: sha512-7PnF4oN3CvZF23ADhA5wRaYEQpJ8qygSkbtTXWBeXWXmEVRXK+1ITciHWwHhsjv1TmW0MgacIv6hEi5pX5NQdA==}
+    engines: {node: '>=10'}
+    dev: false
 
   /internal-slot@1.0.5:
     resolution: {integrity: sha512-Y+R5hJrzs52QCG2laLn4udYVnxsfny9CpOhNhUvk/SSSVyF6T27FzRbF0sroPidSu3X8oEAkOn2K804mjpt6UQ==}

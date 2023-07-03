@@ -5,10 +5,17 @@ import showEditGitUserConfigMultiInput from './editGitUserConfig';
 import showRemoveGitUserConfigQuickPick from './removeGitUserConfig';
 import showGenerateSSHKeyQuickPick from './generateSSHKey';
 import showCopySSHKeyQuickPick from './copySSHKey';
+import editGitDirs from './editGitDirs';
+import addGitDirs from './addGitDirs';
 import type { WorkspaceStorage } from '../Storage';
+import type StatusBarItem from 'src/StatusBarItem';
 
 type Option = {
-  executor: (context: vscode.ExtensionContext, workspaceStorage: WorkspaceStorage) => Promise<void>;
+  executor: (
+    context: vscode.ExtensionContext,
+    workspaceStorage: WorkspaceStorage,
+    statusBarItem: StatusBarItem,
+  ) => Promise<void>;
   label: string;
   detail: string;
 };
@@ -43,9 +50,23 @@ const options: Option[] = [
     detail: 'Generate SSH Key by your git user configs.',
     executor: showCopySSHKeyQuickPick,
   },
+  {
+    label: 'Add Git Dirs',
+    detail: 'Select one or more directories to use one of your git user configs.',
+    executor: addGitDirs,
+  },
+  {
+    label: 'Edit Git Dirs',
+    detail: 'Edit or delete your `gitdir` config.',
+    executor: editGitDirs,
+  },
 ];
 
-export function showEntryOptionsQuickPick(context: vscode.ExtensionContext, workspaceStorage: WorkspaceStorage) {
+export function showEntryOptionsQuickPick(
+  context: vscode.ExtensionContext,
+  workspaceStorage: WorkspaceStorage,
+  statusBarItem: StatusBarItem,
+) {
   const quickPick = vscode.window.createQuickPick();
   quickPick.items = options.map(({ label, detail }) => {
     return {
@@ -61,7 +82,7 @@ export function showEntryOptionsQuickPick(context: vscode.ExtensionContext, work
         return;
       }
 
-      selected.executor(context, workspaceStorage)
+      selected.executor(context, workspaceStorage, statusBarItem)
         .catch((err) => {
           vscode.window.showErrorMessage(err.message);
         }).finally(() => {

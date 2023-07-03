@@ -1,15 +1,15 @@
 import fse from 'fs-extra';
-import * as os from 'node:os';
 import * as path from 'node:path';
 import * as util from 'util';
+import { HOME_DIR } from '../constants';
 // @ts-expect-error module type loss
-import SSHKeyGen = require('ssh-keygen');
+import SSHKeyGen from 'ssh-keygen';
 // @ts-expect-error module type loss
-import SSHConfig = require('ssh-config');
+import SSHConfig from 'ssh-config';
 
 const SSHKeyGenAsync = util.promisify(SSHKeyGen);
 
-const SSHDir = path.join(os.homedir(), '.ssh');
+const SSHDir = path.join(HOME_DIR, '.ssh');
 const SSHConfigPath = path.join(SSHDir, 'config');
 
 export async function generateSSHKey(configId: string, userEmail: string) {
@@ -73,7 +73,7 @@ function findSSHConfigSectionIndex(SSHConfigSections: any[], configName: string)
 
   const currentSSHConfigIndex = SSHConfigSections.findIndex(({ config = [] }) => {
     return config.some(({ param, value }: any) => {
-      return param === 'IdentityFile' && value.replace('~', os.homedir()) === privateKeyPath;
+      return param === 'IdentityFile' && value.replace('~', HOME_DIR) === privateKeyPath;
     });
   });
 
