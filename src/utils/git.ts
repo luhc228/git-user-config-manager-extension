@@ -3,7 +3,7 @@ import simpleGit from 'simple-git';
 import fse from 'fs-extra';
 import ini from 'ini';
 import { HOME_DIR, globalExtensionConfigDir } from '../constants';
-import { BaseGitUserConfig } from '../types';
+import type { GitUserConfig } from '../types';
 
 const GLOBAL_GITCONFIG_PATH = path.join(HOME_DIR, '.gitconfig');
 
@@ -33,7 +33,7 @@ export async function setUserConfig(repoPath: string, name: string, email: strin
   console.info(`Set user config('user.name: '${name}, 'user.email: '${email}) to ${repoPath}.`);
 }
 
-export async function writeGitConfigFile(gitUserConfig: BaseGitUserConfig) {
+export async function writeGitConfigFile(gitUserConfig: GitUserConfig) {
   const { id, ...rest } = gitUserConfig;
   const gitConfigPath = getGitConfigPath(id);
 
@@ -41,7 +41,7 @@ export async function writeGitConfigFile(gitUserConfig: BaseGitUserConfig) {
   console.info('write-git-config-file: ', gitConfigPath, gitUserConfig);
 }
 
-export async function removeGitConfigFile(id: BaseGitUserConfig['id']) {
+export async function removeGitConfigFile(id: GitUserConfig['id']) {
   const gitConfigPath = getGitConfigPath(id);
   if (await fse.pathExists(gitConfigPath)) {
     await fse.remove(gitConfigPath);
@@ -58,7 +58,7 @@ export function getGitConfigPath(gitConfigId: string) {
  * username -> { user: { name } }
  * userEmail -> { user: { Email } }
  */
-function transformGitUserConfig({ userEmail, username }: Omit<BaseGitUserConfig, 'id'>) {
+function transformGitUserConfig({ userEmail, username }: Omit<GitUserConfig, 'id'>) {
   return {
     user: {
       name: username,

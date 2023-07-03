@@ -1,14 +1,14 @@
 import { window } from 'vscode';
 import MultiStepInput from './MultiStepInput';
-import { BaseGitUserConfig } from 'src/types';
+import type { GitUserConfig } from 'src/types';
 import { inputGitUserConfigId } from './inputs';
-import { setBaseGitConfig } from '../utils/baseGitUserConfigs';
+import { updateGitUserConfig } from '../utils/gitUserConfigs';
 
 export default async function showAddGitUserConfigMultiInput() {
-  const state = {} as BaseGitUserConfig;
+  const state = {} as GitUserConfig;
   await MultiStepInput.run(input => inputGitUserConfigId(input, state));
 
-  await setBaseGitConfig(state);
+  await updateGitUserConfig(state);
 
   window.showInformationMessage(`Create Git User Config '${state.id}' successfully.`);
 }

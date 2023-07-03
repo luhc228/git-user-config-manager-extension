@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
-import type { BaseGitUserConfig } from '../types';
+import type { GitUserConfig } from '../types';
 
 export default function showGitUserConfigsQuickPick(
-  gitUserConfigs: BaseGitUserConfig[],
+  gitUserConfigs: GitUserConfig[],
   callback: (selected: vscode.QuickPickItem) => Promise<void>,
 ) {
   const quickPick = vscode.window.createQuickPick();

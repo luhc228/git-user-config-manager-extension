@@ -1,4 +1,4 @@
-import { getBaseGitUserConfigs } from './baseGitUserConfigs';
+import { getGitUserConfigs } from './gitUserConfigs';
 
 function isEmpty(str: string) {
   return !str;
@@ -12,7 +12,7 @@ export function validateConfigId(input: string, checkForDuplicates = true) {
     return 'Please enter a valid config id.';
   }
   if (checkForDuplicates) {
-    const existingGitUserConfigs = getBaseGitUserConfigs();
+    const existingGitUserConfigs = getGitUserConfigs();
     if (existingGitUserConfigs.find((existingGitUserConfig) => existingGitUserConfig.id === input)) {
       return `Git config id with the same name '${input}' already exists!`;
     }

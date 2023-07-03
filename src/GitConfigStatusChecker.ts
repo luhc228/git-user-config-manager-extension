@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { isGitRepo, getUserConfig as getGitUserConfig } from './utils/git';
 import { GIT_USER_CONFIG_NOT_SET_WARNING_MESSAGE_COMMAND } from './commands/showGitUserConfigNotSetMessage';
 import { storageKeys } from './constants';
-import { getBaseGitUserConfigs } from './utils/baseGitUserConfigs';
+import { getGitUserConfigs } from './utils/gitUserConfigs';
 import type StatusBarItem from './StatusBarItem';
 import type { GlobalStorage, WorkspaceStorage } from './Storage';
 
@@ -73,12 +73,12 @@ export default class GitConfigStatusChecker {
   }
 
   private async addConfigIdToStatusBarItem(openedGitRepository: string) {
-    const baseGitUserConfigs = getBaseGitUserConfigs();
-    const gitUserConfig = await getGitUserConfig(openedGitRepository, 'local');
-    const matchGitUserConfig = baseGitUserConfigs.find(baseGitUserConfig => {
+    const gitUserConfigs = getGitUserConfigs();
+    const localGitUserConfig = await getGitUserConfig(openedGitRepository, 'local');
+    const matchGitUserConfig = gitUserConfigs.find(gitUserConfig => {
       return (
-        baseGitUserConfig.userEmail === gitUserConfig.userEmail &&
-        baseGitUserConfig.username === baseGitUserConfig.username
+        localGitUserConfig.userEmail === gitUserConfig.userEmail &&
+        localGitUserConfig.username === gitUserConfig.username
       );
     });
 
@@ -131,7 +131,7 @@ export default class GitConfigStatusChecker {
 
   private async checkIsGitUserConfigAlreadySet(gitRepository: string) {
     if ((this.globalStorage.get<string[]>(storageKeys.CHECKED_GIT_REPOSITORIES) || []).includes(gitRepository)) {
-      return;
+      // return;
     }
     const localGitUserConfig = await getGitUserConfig(gitRepository, 'local');
     // Maybe it will use the includeIf.gitdir.path git config.
@@ -140,8 +140,8 @@ export default class GitConfigStatusChecker {
     // If current repo git user config is same as global git user config, show warning message to user.
     if (
       (localGitUserConfig.userEmail === null && localGitUserConfig.username === null) && (
-        currentRepoGitUserConfig.userEmail !== globalGitUserConfig.userEmail ||
-        currentRepoGitUserConfig.username !== globalGitUserConfig.username
+        currentRepoGitUserConfig.userEmail === globalGitUserConfig.userEmail &&
+        currentRepoGitUserConfig.username === globalGitUserConfig.username
       )
     ) {
       // Show warning message only once.

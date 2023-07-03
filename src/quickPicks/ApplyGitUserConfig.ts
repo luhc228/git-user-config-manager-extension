@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { setUserConfig as setGitUserConfig } from '../utils/git';
 import type { WorkspaceStorage } from '../Storage';
 import { storageKeys } from '../constants';
-import { getBaseGitUserConfigs } from '../utils/baseGitUserConfigs';
+import { getGitUserConfigs } from '../utils/gitUserConfigs';
 import { SHOW_NO_GIT_USER_CONFIGS_FOUND_WARNING_MESSAGE_COMMAND } from '../commands/showNoGitUserConfigsFoundMessage';
 import showGitUserConfigsQuickPick from './showGitUserConfigs';
 
@@ -10,7 +10,7 @@ export default async function showApplyGitUserConfigQuickPick(
   context: vscode.ExtensionContext,
   workspaceStorage: WorkspaceStorage,
 ) {
-  const gitUserConfigs = getBaseGitUserConfigs();
+  const gitUserConfigs = getGitUserConfigs();
 
   if (gitUserConfigs.length === 0) {
     await vscode.commands.executeCommand(SHOW_NO_GIT_USER_CONFIGS_FOUND_WARNING_MESSAGE_COMMAND);

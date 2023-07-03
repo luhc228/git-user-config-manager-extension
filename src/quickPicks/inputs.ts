@@ -1,5 +1,5 @@
 import { validateEmail, validateUsername, validateConfigId } from '../utils/validation';
-import type { BaseGitUserConfig } from '../types';
+import type { GitUserConfig } from '../types';
 import type MultiStepInput from './MultiStepInput';
 
 function getInputBoxTitle(create: boolean) {
@@ -8,7 +8,7 @@ function getInputBoxTitle(create: boolean) {
 
 export async function inputGitUserConfigId(
   input: MultiStepInput,
-  state: Partial<BaseGitUserConfig>,
+  state: Partial<GitUserConfig>,
   create: boolean = true,
 ) {
   state.id = await input.showInputBox({
@@ -26,7 +26,7 @@ export async function inputGitUserConfigId(
 
 export async function inputGitUsername(
   input: MultiStepInput,
-  state: Partial<BaseGitUserConfig>,
+  state: Partial<GitUserConfig>,
   create: boolean = true,
 ) {
   const tip = 'Enter your git user name.';
@@ -45,7 +45,7 @@ export async function inputGitUsername(
 
 async function inputGitUserEmail(
   input: MultiStepInput,
-  state: Partial<BaseGitUserConfig>,
+  state: Partial<GitUserConfig>,
   create: boolean = true,
 ) {
   const tip = 'Enter your git user email.';

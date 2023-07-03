@@ -1,5 +1,5 @@
 import fse from 'fs-extra';
-import { getBaseGitUserConfigs } from './utils/baseGitUserConfigs';
+import { getGitUserConfigs } from './utils/gitUserConfigs';
 import { getGitConfigPath, writeGitConfigFile } from './utils/git';
 import { globalExtensionConfigDir } from './constants';
 
@@ -9,10 +9,10 @@ import { globalExtensionConfigDir } from './constants';
  */
 export default async function initGitConfigs() {
   await fse.ensureDir(globalExtensionConfigDir);
-  const gitUserConfigs = getBaseGitUserConfigs();
+  const gitUserConfigs = getGitUserConfigs();
   for (const gitUserConfig of gitUserConfigs) {
     const gitConfigPath = getGitConfigPath(gitUserConfig.id);
-    if (true || !await fse.pathExists(gitConfigPath)) {
+    if (!await fse.pathExists(gitConfigPath)) {
       await writeGitConfigFile(gitUserConfig);
     }
   }

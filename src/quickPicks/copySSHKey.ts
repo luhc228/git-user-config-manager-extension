@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
-import { getBaseGitUserConfigs } from '../utils/baseGitUserConfigs';
+import { getGitUserConfigs } from '../utils/gitUserConfigs';
 import { SHOW_NO_GIT_USER_CONFIGS_FOUND_WARNING_MESSAGE_COMMAND } from '../commands/showNoGitUserConfigsFoundMessage';
 import showGitUserConfigsQuickPick from './showGitUserConfigs';
 import { getSSHPublicKey } from '../utils/ssh';
 
 export default async function showShowSSHKeyQuickPick() {
-  const gitUserConfigs = getBaseGitUserConfigs();
+  const gitUserConfigs = getGitUserConfigs();
 
   if (gitUserConfigs.length === 0) {
     await vscode.commands.executeCommand(SHOW_NO_GIT_USER_CONFIGS_FOUND_WARNING_MESSAGE_COMMAND);

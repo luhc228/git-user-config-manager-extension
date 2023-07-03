@@ -1,9 +1,5 @@
-export interface BaseGitUserConfig {
+export interface GitUserConfig {
   id: string;
   username: string;
   userEmail: string;
-}
-
-export interface GitUserConfig extends BaseGitUserConfig {
-  gitdirs: string[];
 }
