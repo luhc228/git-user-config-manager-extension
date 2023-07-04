@@ -142,7 +142,7 @@ export default class GitConfigStatusChecker {
 
   private async checkIsGitUserConfigAlreadySet(gitRepository: string) {
     if ((this.globalStorage.get<string[]>(storageKeys.CHECKED_GIT_REPOSITORIES) || []).includes(gitRepository)) {
-      // return;
+      return;
     }
     const localGitUserConfig = await getGitUserConfig(gitRepository, 'local');
     // Maybe it will use the includeIf.gitdir.path git config.

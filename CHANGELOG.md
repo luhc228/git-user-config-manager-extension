@@ -4,6 +4,7 @@
 
 - chore: update description
 - fix: command arguments are missing
+- fix: show warning messages one more time
 
 ## [0.0.2]
 
