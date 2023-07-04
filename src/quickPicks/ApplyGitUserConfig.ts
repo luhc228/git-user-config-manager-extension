@@ -5,10 +5,12 @@ import { storageKeys } from '../constants';
 import { getGitUserConfigs } from '../utils/gitUserConfigs';
 import { SHOW_NO_GIT_USER_CONFIGS_FOUND_WARNING_MESSAGE_COMMAND } from '../commands/showNoGitUserConfigsFoundMessage';
 import showGitUserConfigsQuickPick from './showGitUserConfigs';
+import type StatusBarItem from '../StatusBarItem';
 
 export default async function showApplyGitUserConfigQuickPick(
   context: vscode.ExtensionContext,
   workspaceStorage: WorkspaceStorage,
+  statusBarItem: StatusBarItem,
 ) {
   const gitUserConfigs = getGitUserConfigs();
 
@@ -28,6 +30,7 @@ export default async function showApplyGitUserConfigQuickPick(
       selected.username,
       selected.userEmail,
     );
+    statusBarItem.updateStatusBarItem('Normal', { text: `${selected.id}` });
     vscode.window.showInformationMessage(`Apply git user config '${selected.id}' successfully!`);
   });
 }

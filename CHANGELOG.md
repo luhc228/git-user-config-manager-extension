@@ -5,6 +5,7 @@
 - chore: update description
 - fix: command arguments are missing
 - fix: show warning messages one more time
+- fix: not update status bar id when apply a new git user config
 
 ## [0.0.2]
 
