@@ -64,5 +64,10 @@
     "ini": "^2.0.0",
     "simple-git": "^3.19.1",
     "ssh-config": "^4.2.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/luhc228/git-user-config-manager-extension"
+  },
+  "license": "MIT"
 }
