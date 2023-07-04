@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.3]
+
+- chore: update description
+
 ## [0.0.2]
 
 - chore: update License

@@ -1,9 +1,9 @@
 {
   "name": "git-user-config-manager",
   "displayName": "Git User Config Manager",
-  "description": "A VSCode Extension for managing your git user config.",
+  "description": "A VSCode Extension for managing your git user configs easier.",
   "publisher": "luhc228",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.78.0"
   },
