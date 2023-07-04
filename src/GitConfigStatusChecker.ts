@@ -155,9 +155,7 @@ export default class GitConfigStatusChecker {
         currentRepoGitUserConfig.username === globalGitUserConfig.username
       )
     ) {
-      // Show warning message only once.
-      vscode.commands.executeCommand(
-        GIT_USER_CONFIG_NOT_SET_WARNING_MESSAGE_COMMAND,
+      const commandArgs = [
         gitRepository,
         globalGitUserConfig,
         () => {
@@ -166,8 +164,23 @@ export default class GitConfigStatusChecker {
           // Mark as checked git repo to global storage, don't show warning message next time.
           this.addCheckedGitRepository(gitRepository);
         },
+      ];
+      // Show warning message only once.
+      vscode.commands.executeCommand(
+        GIT_USER_CONFIG_NOT_SET_WARNING_MESSAGE_COMMAND,
+        ...commandArgs,
       );
-      this.statusBarItem.updateStatusBarItem('Warning', { command: GIT_USER_CONFIG_NOT_SET_WARNING_MESSAGE_COMMAND });
+
+      this.statusBarItem.updateStatusBarItem(
+        'Warning',
+        {
+          command: {
+            command: GIT_USER_CONFIG_NOT_SET_WARNING_MESSAGE_COMMAND,
+            title: '',
+            arguments: commandArgs,
+          },
+        },
+      );
     }
   }
 

@@ -3,6 +3,7 @@
 ## [0.0.3]
 
 - chore: update description
+- fix: command arguments are missing
 
 ## [0.0.2]
 
