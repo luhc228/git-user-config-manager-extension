@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.2]
+
+- chore: update License
+
 ## [0.0.1]
 
 - chore: update README gif
