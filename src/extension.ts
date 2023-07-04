@@ -14,9 +14,9 @@ export async function activate(context: vscode.ExtensionContext) {
   const statusBar = new StatusBar(context);
   statusBar.updateStatusBarItem();
 
-  registerCommands(context, workspaceStorage, statusBar);
+  const gitConfigStatusChecker = new GitConfigStatusChecker(context, statusBar, globalStorage, workspaceStorage);
 
-  new GitConfigStatusChecker(context, statusBar, globalStorage, workspaceStorage);
+  registerCommands(context, workspaceStorage, statusBar, gitConfigStatusChecker);
 }
 
 export function deactivate() { }

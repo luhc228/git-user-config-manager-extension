@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import MultiStepInput from './MultiStepInput';
-import type { GitUserConfig } from 'src/types';
+import type { GitUserConfig } from '../types';
 import { inputGitUserConfigId } from './inputs';
 import { getGitUserConfigs, updateGitUserConfig } from '../utils/gitUserConfigs';
 import { SHOW_NO_GIT_USER_CONFIGS_FOUND_WARNING_MESSAGE_COMMAND } from '../commands/showNoGitUserConfigsFoundMessage';

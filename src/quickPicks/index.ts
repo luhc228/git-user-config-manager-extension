@@ -8,13 +8,15 @@ import showCopySSHKeyQuickPick from './copySSHKey';
 import editGitDirs from './editGitDirs';
 import addGitDirs from './addGitDirs';
 import type { WorkspaceStorage } from '../Storage';
-import type StatusBarItem from 'src/StatusBarItem';
+import type StatusBarItem from '../StatusBarItem';
+import type GitConfigStatusChecker from '../GitConfigStatusChecker';
 
 type Option = {
   executor: (
     context: vscode.ExtensionContext,
     workspaceStorage: WorkspaceStorage,
     statusBarItem: StatusBarItem,
+    gitConfigStatusChecker: GitConfigStatusChecker,
   ) => Promise<void>;
   label: string;
   detail: string;
@@ -66,6 +68,7 @@ export function showEntryOptionsQuickPick(
   context: vscode.ExtensionContext,
   workspaceStorage: WorkspaceStorage,
   statusBarItem: StatusBarItem,
+  gitConfigStatusChecker: GitConfigStatusChecker,
 ) {
   const quickPick = vscode.window.createQuickPick();
   quickPick.items = options.map(({ label, detail }) => {
@@ -82,7 +85,7 @@ export function showEntryOptionsQuickPick(
         return;
       }
 
-      selected.executor(context, workspaceStorage, statusBarItem)
+      selected.executor(context, workspaceStorage, statusBarItem, gitConfigStatusChecker)
         .catch((err) => {
           vscode.window.showErrorMessage(err.message);
         }).finally(() => {

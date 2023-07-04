@@ -5,16 +5,18 @@ import registryShowNoGitUserConfigsFoundMessage from './showNoGitUserConfigsFoun
 import registryShowAddUserConfigQuickPick from './addGitUserConfig';
 import registryShowApplyGitUserConfigQuickPick from './showApplyGitUserConfigQuickPick';
 import type { WorkspaceStorage } from '../Storage';
-import type StatusBarItem from 'src/StatusBarItem';
+import type StatusBarItem from '../StatusBarItem';
+import type GitConfigStatusChecker from '../GitConfigStatusChecker';
 
 export default function registerCommands(
   context: vscode.ExtensionContext,
   workspaceStorage: WorkspaceStorage,
   statusBarItem: StatusBarItem,
+  gitConfigStatusChecker: GitConfigStatusChecker,
 ) {
   context.subscriptions.push(
     registryShowGitUserConfigNotSetMessage(),
-    registryShowEntryOptionsQuickPick(context, workspaceStorage, statusBarItem),
+    registryShowEntryOptionsQuickPick(context, workspaceStorage, statusBarItem, gitConfigStatusChecker),
     registryShowAddUserConfigQuickPick(),
     registryShowNoGitUserConfigsFoundMessage(),
     registryShowApplyGitUserConfigQuickPick(context, workspaceStorage),

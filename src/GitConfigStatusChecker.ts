@@ -5,12 +5,14 @@ import { storageKeys } from './constants';
 import { getGitUserConfigs } from './utils/gitUserConfigs';
 import type StatusBarItem from './StatusBarItem';
 import type { GlobalStorage, WorkspaceStorage } from './Storage';
+import { GitUserConfig } from './types';
 
 export default class GitConfigStatusChecker {
   private statusBarItem: StatusBarItem;
   private globalStorage: GlobalStorage;
   private workspaceStorage: WorkspaceStorage;
   private gitRepositories: string[];
+  private currentGitUserConfig: GitUserConfig | undefined;
 
   constructor(
     context: vscode.ExtensionContext,
@@ -33,6 +35,10 @@ export default class GitConfigStatusChecker {
     this.doInitialScan();
   }
 
+  public getCurrentGitUserConfig() {
+    return this.currentGitUserConfig;
+  }
+
   private async doInitialScan() {
     await this.scanWorkspaceFolders();
 
@@ -48,7 +54,7 @@ export default class GitConfigStatusChecker {
     }));
   }
 
-  // set current opened git repository to workspace storage
+  // set current opened git repository to workspace storage.
   private async setCurrentOpenedGitRepository() {
     let currentOpenedGitRepository: string = this.gitRepositories[0];
 
@@ -66,13 +72,17 @@ export default class GitConfigStatusChecker {
     }
     // If current opened git repo change, update the status bar item
     if (currentOpenedGitRepository) {
-      await this.addConfigIdToStatusBarItem(currentOpenedGitRepository);
+      const currentGitUserConfig = await this._getCurrentGitUserConfig(currentOpenedGitRepository);
+      this.currentGitUserConfig = currentGitUserConfig;
+      if (currentGitUserConfig) {
+        await this.addConfigIdTextToStatusBarItem(currentGitUserConfig);
+      }
     }
 
     this.workspaceStorage.set(storageKeys.CURRENT_OPENED_GIT_REPOSITORY, currentOpenedGitRepository);
   }
 
-  private async addConfigIdToStatusBarItem(openedGitRepository: string) {
+  private async _getCurrentGitUserConfig(openedGitRepository: string) {
     const gitUserConfigs = getGitUserConfigs();
     const localGitUserConfig = await getGitUserConfig(openedGitRepository, 'local');
     const matchGitUserConfig = gitUserConfigs.find(gitUserConfig => {
@@ -81,10 +91,11 @@ export default class GitConfigStatusChecker {
         localGitUserConfig.username === gitUserConfig.username
       );
     });
+    return matchGitUserConfig;
+  }
 
-    if (matchGitUserConfig) {
-      this.statusBarItem.updateStatusBarItem('Normal', { text: `${matchGitUserConfig.id}` });
-    }
+  private async addConfigIdTextToStatusBarItem(currentGitUserConfig: GitUserConfig) {
+    this.statusBarItem.updateStatusBarItem('Normal', { text: `${currentGitUserConfig.id}` });
   }
 
   // Return true, display it. Return false, hide it.

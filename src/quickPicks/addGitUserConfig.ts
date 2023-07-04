@@ -1,6 +1,6 @@
 import { window } from 'vscode';
 import MultiStepInput from './MultiStepInput';
-import type { GitUserConfig } from 'src/types';
+import type { GitUserConfig } from '../types';
 import { inputGitUserConfigId } from './inputs';
 import { updateGitUserConfig } from '../utils/gitUserConfigs';
 
