@@ -1,3 +1,4 @@
+import { join } from 'path';
 import * as vscode from 'vscode';
 import { isGitRepo, getUserConfig as getGitUserConfig } from './utils/git';
 import { GIT_USER_CONFIG_NOT_SET_WARNING_MESSAGE_COMMAND } from './commands/showGitUserConfigNotSetMessage';
@@ -6,6 +7,8 @@ import { getGitUserConfigs } from './utils/gitUserConfigs';
 import type StatusBarItem from './StatusBarItem';
 import type { GlobalStorage, WorkspaceStorage } from './Storage';
 import { GitUserConfig } from './types';
+
+const GIT_DIR_NAME = '.git';
 
 export default class GitConfigStatusChecker {
   private statusBarItem: StatusBarItem;
@@ -42,10 +45,7 @@ export default class GitConfigStatusChecker {
   private async doInitialScan() {
     await this.scanWorkspaceFolders();
 
-    const res = this.handleStatusBarItemDisplay();
-    if (!res) {
-      return;
-    }
+    this.handleStatusBarItemDisplay();
 
     await this.setCurrentOpenedGitRepository();
 
@@ -75,7 +75,7 @@ export default class GitConfigStatusChecker {
       const currentGitUserConfig = await this._getCurrentGitUserConfig(currentOpenedGitRepository);
       this.currentGitUserConfig = currentGitUserConfig;
       if (currentGitUserConfig) {
-        await this.addConfigIdTextToStatusBarItem(currentGitUserConfig);
+        await this.updateGitConfigToStatusBarItem(currentGitUserConfig);
       }
     }
 
@@ -85,16 +85,20 @@ export default class GitConfigStatusChecker {
   private async _getCurrentGitUserConfig(openedGitRepository: string) {
     const gitUserConfigs = getGitUserConfigs();
     const localGitUserConfig = await getGitUserConfig(openedGitRepository, 'local');
-    const matchGitUserConfig = gitUserConfigs.find(gitUserConfig => {
+    // Maybe it will use the includeIf.gitdir.path git config.
+    const currentRepoGitUserConfig = await getGitUserConfig(openedGitRepository);
+    return gitUserConfigs.find(gitUserConfig => {
       return (
         localGitUserConfig.userEmail === gitUserConfig.userEmail &&
         localGitUserConfig.username === gitUserConfig.username
+      ) || (
+          currentRepoGitUserConfig.userEmail === gitUserConfig.userEmail &&
+          currentRepoGitUserConfig.username === gitUserConfig.username
       );
     });
-    return matchGitUserConfig;
   }
 
-  private async addConfigIdTextToStatusBarItem(currentGitUserConfig: GitUserConfig) {
+  private async updateGitConfigToStatusBarItem(currentGitUserConfig: GitUserConfig) {
     this.statusBarItem.updateStatusBarItem('Normal', { text: `${currentGitUserConfig.id}` });
   }
 
@@ -102,55 +106,38 @@ export default class GitConfigStatusChecker {
   private handleStatusBarItemDisplay() {
     if (this.gitRepositories.length === 0) {
       this.statusBarItem.getStatusBarItem().hide();
-      return false;
+    } else {
+      this.statusBarItem.getStatusBarItem().show();
     }
-    this.statusBarItem.getStatusBarItem().show();
-    return true;
   }
 
   // Scans each workspace folder, looking for git repositories.
   private async scanWorkspaceFolders() {
     const workspaceFolderPaths = (vscode.workspace.workspaceFolders || []).map(folder => folder.uri.path);
-    const gitRepositories = await this.getGitRepositories(workspaceFolderPaths);
+    console.log(await isGitRepo(workspaceFolderPaths[0]));
+    const gitRepositories = [];
+    for (const workspaceFolderPath of workspaceFolderPaths) {
+      if (await isGitRepo(workspaceFolderPath)) {
+        gitRepositories.push(workspaceFolderPath);
+      }
+    }
     this.gitRepositories = gitRepositories;
   }
 
-  private async getGitRepositories(files: string[]) {
-    const gitRepositories: string[] = [];
-    for (const file of files) {
-      const possibleGitRepositoryPath = this.getPossibleGitRepository(file);
-      if (await isGitRepo(possibleGitRepositoryPath)) {
-        gitRepositories.push(possibleGitRepositoryPath);
-      }
-    }
-    return gitRepositories;
-  }
-
-  private getPossibleGitRepository(path: string) {
-    let possibleGitRepositoryPath;
-
-    if (/\/\.git/.test(path)) {
-      // get dir from file path
-      const pathSplitItems = path.split('.git');
-      possibleGitRepositoryPath = pathSplitItems[0];
-    } else {
-      // workspace dir
-      possibleGitRepositoryPath = path;
-    }
-    return this.formatGitRepositoryPath(possibleGitRepositoryPath);
-  }
-
   private async checkIsGitUserConfigAlreadySet(gitRepository: string) {
+    // Ensure show warning message only once for the same git repo.
     if ((this.globalStorage.get<string[]>(storageKeys.CHECKED_GIT_REPOSITORIES) || []).includes(gitRepository)) {
       return;
     }
+
     const localGitUserConfig = await getGitUserConfig(gitRepository, 'local');
     // Maybe it will use the includeIf.gitdir.path git config.
     const currentRepoGitUserConfig = await getGitUserConfig(gitRepository);
     const globalGitUserConfig = await getGitUserConfig(gitRepository, 'global');
-    // If current repo git user config is same as global git user config, show warning message to user.
     if (
+      // local git user config not set
       (localGitUserConfig.userEmail === null && localGitUserConfig.username === null) && (
+        // If current repo git user config is same as global git user config, show warning message to user.
         currentRepoGitUserConfig.userEmail === globalGitUserConfig.userEmail &&
         currentRepoGitUserConfig.username === globalGitUserConfig.username
       )
@@ -162,10 +149,10 @@ export default class GitConfigStatusChecker {
           // While user confirm the message, we don't show warning status again.
           this.statusBarItem.updateStatusBarItem('Normal');
           // Mark as checked git repo to global storage, don't show warning message next time.
-          this.addCheckedGitRepository(gitRepository);
+          this.addCheckedGitRepositoryToStorage(gitRepository);
         },
       ];
-      // Show warning message only once.
+
       vscode.commands.executeCommand(
         GIT_USER_CONFIG_NOT_SET_WARNING_MESSAGE_COMMAND,
         ...commandArgs,
@@ -185,7 +172,7 @@ export default class GitConfigStatusChecker {
   }
 
   // add checked git repository to global storage
-  private addCheckedGitRepository(gitRepository: string) {
+  private addCheckedGitRepositoryToStorage(gitRepository: string) {
     const checkedGitRepositories = new Set(this.globalStorage.get<string[]>(
       storageKeys.CHECKED_GIT_REPOSITORIES) || [],
     );
@@ -206,58 +193,82 @@ export default class GitConfigStatusChecker {
   }
 
   private async onDidChangeWorkspaceFolders({ added, removed }: vscode.WorkspaceFoldersChangeEvent) {
-    const addedWorkspaceFolders = added.map(folder => folder.uri.path);
+    // Handle removed workspace folders
     const removedWorkspaceFolders = removed.map(folder => folder.uri.path);
 
-    const addedGitRepositories = await this.getGitRepositories(addedWorkspaceFolders);
-
     await Promise.all(removedWorkspaceFolders.map(removedWorkspaceFolder => {
-      const possibleGitRepository = this.getPossibleGitRepository(removedWorkspaceFolder);
-      const possibleGitRepositoryIndex = this.gitRepositories.indexOf(possibleGitRepository);
-      if (possibleGitRepositoryIndex > -1) {
-        this.gitRepositories.splice(possibleGitRepositoryIndex, 1);
+      return this.handleDeletePossibleGitRepo(removedWorkspaceFolder);
+    }));
+
+    // Handle added workspace folders
+    const addedWorkspaceFolders = added.map(folder => folder.uri.path);
+    const gitRepositories: string[] = [];
+    for (const addedWorkspaceFolder of addedWorkspaceFolders) {
+      if (await isGitRepo(addedWorkspaceFolder)) {
+        gitRepositories.push(addedWorkspaceFolder);
       }
-      return this.removeCheckedGitRepositoryFromStorage(possibleGitRepository);
-    }));
-
-    this.gitRepositories = this.gitRepositories.concat(addedGitRepositories);
-    const res = this.handleStatusBarItemDisplay();
-    if (!res) {
-      return;
     }
-
-    this.setCurrentOpenedGitRepository();
-
-    await Promise.all(addedGitRepositories.map((addedGitRepository) => {
-      return this.checkIsGitUserConfigAlreadySet(addedGitRepository);
-    }));
+    gitRepositories.forEach(gitRepository => {
+      this.handleCreateGitRepo(gitRepository);
+    });
   }
 
   private onDidCreateFile = async (fileUri: vscode.Uri) => {
-    const gitRepositories = await this.getGitRepositories([fileUri.path]);
-    this.gitRepositories = this.gitRepositories.concat(gitRepositories);
-
-    const res = this.handleStatusBarItemDisplay();
-    if (!res) {
+    const possibleGitRepository = (vscode.workspace.workspaceFolders || []).find((workspaceFolder) => {
+      return fileUri.path.startsWith(join(workspaceFolder.uri.path, GIT_DIR_NAME));
+    });
+    if (!possibleGitRepository) {
       return;
     }
 
-    this.setCurrentOpenedGitRepository();
+    const isGitRepository = await isGitRepo(possibleGitRepository.uri.path);
+    if (!isGitRepository) {
+      return;
+    }
 
-    await Promise.all(gitRepositories.map((gitRepository) => {
-      return this.checkIsGitUserConfigAlreadySet(gitRepository);
-    }));
+    const gitRepositoryPath = possibleGitRepository.uri.path;
+
+    this.handleCreateGitRepo(gitRepositoryPath);
   };
 
   private onDidDeleteFile = async (fileUri: vscode.Uri) => {
-    this.removeCheckedGitRepositoryFromStorage(this.getPossibleGitRepository(fileUri.path));
+    const possibleGitRepository = (vscode.workspace.workspaceFolders || []).find((workspaceFolder) => {
+      return fileUri.path.startsWith(join(workspaceFolder.uri.path, GIT_DIR_NAME));
+    });
+    if (!possibleGitRepository) {
+      return;
+    }
+    this.handleDeletePossibleGitRepo(possibleGitRepository.uri.path);
   };
 
   private onDidChangeVisibleTextEditors = () => {
     this.setCurrentOpenedGitRepository();
   };
 
-  private formatGitRepositoryPath(originalGitRepositoryPath: string) {
-    return originalGitRepositoryPath.replace(/[/\\\\]$/, '');
+  private handleCreateGitRepo(gitRepositoryPath: string) {
+    this.gitRepositories.push(gitRepositoryPath);
+
+    this.handleStatusBarItemDisplay();
+
+    this.setCurrentOpenedGitRepository();
+
+    this.checkIsGitUserConfigAlreadySet(gitRepositoryPath);
+  }
+
+  private handleDeletePossibleGitRepo(possibleGitRepositoryPath: string) {
+    const possibleGitRepositoryIndex = this.gitRepositories.indexOf(possibleGitRepositoryPath);
+    if (possibleGitRepositoryIndex === -1) {
+      return;
+    }
+
+    const gitRepositoryPath = possibleGitRepositoryPath;
+
+    this.gitRepositories.splice(possibleGitRepositoryIndex, 1);
+
+    this.handleStatusBarItemDisplay();
+
+    this.setCurrentOpenedGitRepository();
+
+    this.removeCheckedGitRepositoryFromStorage(gitRepositoryPath);
   }
 }
