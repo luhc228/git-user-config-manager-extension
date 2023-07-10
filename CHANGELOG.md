@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.4]
+
+- refactor: git config status check
+
 ## [0.0.3]
 
 - chore: update description
