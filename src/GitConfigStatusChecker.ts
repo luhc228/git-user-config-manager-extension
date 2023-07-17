@@ -1,6 +1,6 @@
 import { dirname } from 'path';
 import * as vscode from 'vscode';
-import { isGitRepo, getUserConfig as getGitUserConfig } from './utils/git';
+import { isGitRepo, getUserConfig as getGitUserConfig, getUserGitDirs } from './utils/git';
 import { GIT_USER_CONFIG_NOT_SET_WARNING_MESSAGE_COMMAND } from './commands/showGitUserConfigNotSetMessage';
 import { storageKeys } from './constants';
 import { getGitUserConfigs } from './utils/gitUserConfigs';
@@ -60,12 +60,11 @@ export default class GitConfigStatusChecker {
     if (activeTextEditor && activeTextEditor.document.uri.scheme === 'file') {
       const resource = activeTextEditor.document.uri;
       const folder = vscode.workspace.getWorkspaceFolder(resource);
-      if (!folder) {
-        return;
-      }
-      const possibleGitRepository = this.gitRepositories.find(gitRepository => gitRepository === folder.uri.path);
-      if (possibleGitRepository) {
-        currentOpenedGitRepository = possibleGitRepository;
+      if (folder) {
+        const possibleGitRepository = this.gitRepositories.find(gitRepository => gitRepository === folder.uri.path);
+        if (possibleGitRepository) {
+          currentOpenedGitRepository = possibleGitRepository;
+        }
       }
     }
     // If current opened git repo change, update the status bar item
@@ -94,10 +93,6 @@ export default class GitConfigStatusChecker {
           currentRepoGitUserConfig.username === gitUserConfig.username
       );
     });
-  }
-
-  private async updateGitConfigToStatusBarItem(currentGitUserConfig: GitUserConfig) {
-    this.statusBarItem.updateStatusBarItem('Normal', { text: `${currentGitUserConfig.id}` });
   }
 
   // Return true, display it. Return false, hide it.
@@ -131,10 +126,15 @@ export default class GitConfigStatusChecker {
     // Mark as checked git repo to global storage, don't show warning message next time.
     this.addCheckedGitRepositoryToStorage(gitRepository);
 
+    if (await this.isGitRepositoryInGitDir(gitRepository)) {
+      return;
+    }
+
     const localGitUserConfig = await getGitUserConfig(gitRepository, 'local');
     // Maybe it will use the includeIf.gitdir.path git config.
     const currentRepoGitUserConfig = await getGitUserConfig(gitRepository);
     const globalGitUserConfig = await getGitUserConfig(gitRepository, 'global');
+
     if (
       // local git user config not set
       (localGitUserConfig.userEmail === null && localGitUserConfig.username === null) && (
@@ -168,6 +168,16 @@ export default class GitConfigStatusChecker {
         },
       );
     }
+  }
+
+  private async isGitRepositoryInGitDir(gitRepository: string) {
+    const gitDirsSet = new Set<string>();
+
+    const userGitDirs = await getUserGitDirs();
+    Object.values(userGitDirs).map(val => val).flat().forEach(gitDir => {
+      gitDirsSet.add(gitDir);
+    });
+    return !!Array.from(gitDirsSet).find(gitDir => gitRepository.startsWith(gitDir));
   }
 
   // add checked git repository to global storage

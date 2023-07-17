@@ -3,6 +3,7 @@
 ## [0.0.5]
 
 - fix: show warning message when git checkout branch
+- fix: show warning message when current repo is in git dirs
 
 ## [0.0.4]
 

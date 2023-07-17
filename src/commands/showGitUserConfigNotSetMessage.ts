@@ -19,13 +19,18 @@ export default function registryShowGitUserConfigNotSetWarningMessage() {
       vscode.window.showWarningMessage<string>(
         `Current git repository(${path.basename(gitRepoPath)}) will use the global git config(${username}(${userEmail})). Do you want to use another one?`,
         ...actions,
-      ).then(res => {
+      ).then(
+        (res) => {
         showWarningMessage = false;
         callback();
         if (res === actions[0]) {
           vscode.commands.executeCommand(SHOW_APPLY_GIT_USER_CONFIG_QUICK_PICK_COMMAND);
         }
-      });
+        },
+        () => {
+          showWarningMessage = false;
+        },
+      );
     },
   );
 }

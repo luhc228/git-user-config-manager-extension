@@ -82,6 +82,26 @@ export async function addUserGitDir(
   console.info('update-user-git-dir: ', includeIfKey, globalGitConfig[includeIfKey]);
 }
 
+export async function getUserGitDirs() {
+  const globalGitConfig = await parseGitConfig(GLOBAL_GITCONFIG_PATH);
+  const userGitDirs: Record<string, string[]> = {};
+
+  const configKeys = Object.keys(globalGitConfig);
+
+  for (const configKey of configKeys) {
+    const { path: gitConfigPath } = globalGitConfig[configKey];
+    if (!gitConfigPath) {
+      continue;
+    }
+    if (!userGitDirs[gitConfigPath]) {
+      userGitDirs[gitConfigPath] = [];
+    }
+    const gitDir = configKey.replace(/includeIf "gitdir:(.*)"/, (match, p1) => p1);
+    userGitDirs[gitConfigPath].push(gitDir);
+  }
+
+  return userGitDirs;
+}
 async function parseGitConfig(gitConfigPath: string) {
   const gitConfigContent = await fse.readFile(gitConfigPath, 'utf-8');
   return ini.parse(gitConfigContent);
