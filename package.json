@@ -3,7 +3,7 @@
   "displayName": "Git User Config Manager",
   "description": "A VSCode Extension for managing your git user configs easier.",
   "publisher": "luhc228",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "engines": {
     "vscode": "^1.78.0"
   },

@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.5]
+
+- fix: show warning message when git checkout branch
+
 ## [0.0.4]
 
 - refactor: git config status check
