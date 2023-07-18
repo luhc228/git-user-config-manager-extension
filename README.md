@@ -50,4 +50,6 @@ Git User Config Manager extension helps you manage and switch your git user conf
 
 All of your git project in your the directories of you configure gitdir config will use one of your git user configs. It means that you don't need to configure the git user config everytime.
 
+Note: If your git project is in your git dir, it will not check if your project has git user configs set up or show the warning message.
+
 ![gitdir](https://github.com/luhc228/git-user-config-manager-extension/assets/44047106/96d224be-646f-4d5f-a406-a5ae79e41aeb)

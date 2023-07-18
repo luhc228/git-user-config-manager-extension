@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.6]
+
+- fix: statusBarItem is undefined
+
 ## [0.0.5]
 
 - fix: show warning message when git checkout branch

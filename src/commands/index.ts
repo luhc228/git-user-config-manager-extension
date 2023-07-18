@@ -19,6 +19,6 @@ export default function registerCommands(
     registryShowEntryOptionsQuickPick(context, workspaceStorage, statusBarItem, gitConfigStatusChecker),
     registryShowAddUserConfigQuickPick(),
     registryShowNoGitUserConfigsFoundMessage(),
-    registryShowApplyGitUserConfigQuickPick(context, workspaceStorage),
+    registryShowApplyGitUserConfigQuickPick(context, workspaceStorage, statusBarItem),
   );
 }

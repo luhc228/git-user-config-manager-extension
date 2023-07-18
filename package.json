@@ -3,7 +3,7 @@
   "displayName": "Git User Config Manager",
   "description": "A VSCode Extension for managing your git user configs easier.",
   "publisher": "luhc228",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "engines": {
     "vscode": "^1.78.0"
   },
@@ -33,7 +33,7 @@
     "vscode:prepublish": "pnpm esbuild-base --minify",
     "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
     "watch": "pnpm esbuild-base --sourcemap --watch",
-    "build": "pnpm esbuild-base --sourcemap",
+    "build": "tsc && pnpm esbuild-base --sourcemap",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
