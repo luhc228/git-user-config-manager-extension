@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "target": "ES2022",
+    "moduleResolution": "NodeNext",
     "baseUrl": "./",
     "rootDir": "src",
     "strict": true,

@@ -88,6 +88,7 @@ export async function getUserGitDirs() {
 
   const configKeys = Object.keys(globalGitConfig);
 
+  // 支持重复的 git User Config
   for (const configKey of configKeys) {
     const { path: gitConfigPath } = globalGitConfig[configKey];
     if (!gitConfigPath) {
@@ -113,12 +114,14 @@ async function writeGitConfig(gitConfigPath: string, config: Record<string, any>
 }
 
 /**
- * Add path.sep to git dir path to make it match everything inside of the git dir recursively.
+ * 1. Add path.sep to git dir path to make it match everything inside of the git dir recursively.
+ * 2. add backslash to the front of the dot `.`. For example: includeIf "gitdir:/Users/luhc228/workspace/github\.com"
+ *    to escape lose the back string of `.`(includeIf "gitdir:/Users/luhc228/workspace/github") when reading git config
  */
 function formatGitDir(originGitDir: string) {
   const { sep } = path;
   if (!originGitDir.endsWith(sep)) {
     return originGitDir + sep;
   }
-  return originGitDir;
+  return originGitDir.replaceAll('.', String.raw`\.`);
 }

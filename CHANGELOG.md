@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.7]
+
+- fix: gitdir path with dot is invalid
+
 ## [0.0.6]
 
 - fix: statusBarItem is undefined
